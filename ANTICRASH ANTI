@@ -1,0 +1,54 @@
+--[[
+  Script by فارس و تيم FO
+  سكربت مصمم لمنع الـ crash بأقصى قدر من الكفاءة والاقتصاد في استخدام الموارد
+--]]
+
+-- وظيفة لتحسين استخدام الذاكرة ومنع الـ crash
+local function optimizeMemory()
+    -- مراقبة إضافة اللاعبين
+    game:GetService("Players").PlayerAdded:Connect(function(player)
+        -- مراقبة إضافة الشخصيات
+        player.CharacterAdded:Connect(function(character)
+            -- مراقبة إضافة الأجزاء
+            character.DescendantAdded:Connect(function(descendant)
+                if descendant:IsA("BasePart") or descendant:IsA("MeshPart") then
+                    -- تحرير الملكية الشبكية لتقليل الحمل على الشبكة
+                    descendant:SetNetworkOwner(nil)
+                end
+            end)
+        end)
+    end)
+
+    -- تنظيف الذاكرة بشكل دوري لتحسين الأداء
+    while true do
+        collectgarbage()  -- تجميع القمامة (تحرير الذاكرة غير المستخدمة)
+        wait(10)  -- الانتظار 10 ثواني بين كل عملية تنظيف لتقليل الضغط على الموارد
+    end
+end
+
+-- رسالة ترحيب لتأكيد أن السكربت يعمل
+local function showWelcomeMessage()
+    local ScreenGui = Instance.new("ScreenGui")
+    local TextLabel = Instance.new("TextLabel")
+    
+    ScreenGui.Parent = game.CoreGui
+    TextLabel.Parent = ScreenGui
+    TextLabel.Size = UDim2.new(0, 300, 0, 50)
+    TextLabel.Position = UDim2.new(0.5, -150, 0.1, 0)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Text = "منع الـ crash مفعل"
+    TextLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    TextLabel.Font = Enum.Font.SourceSansBold
+    TextLabel.TextScaled = true
+    
+    wait(3)  -- إظهار الرسالة لمدة 3 ثواني
+    ScreenGui:Destroy()
+end
+
+-- استدعاء وظيفة التأكيد
+showWelcomeMessage()
+
+-- استدعاء وظيفة تحسين الذاكرة
+optimizeMemory()
+
+-- يمكن إضافة تحسينات إضافية هنا إذا لزم الأمر
